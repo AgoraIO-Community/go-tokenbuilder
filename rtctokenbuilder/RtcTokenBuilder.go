@@ -3,7 +3,7 @@ package rtctokenbuilder
 import (
 	"fmt"
 
-	"go-tokenbuilder/accesstoken"
+	"github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
 )
 
 // Role Type

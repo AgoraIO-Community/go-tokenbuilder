@@ -1,7 +1,7 @@
 package rtmtokenbuilder
 
 import (
-	"github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
+	"go-tokenbuilder/accesstoken"
 )
 
 // Role Type

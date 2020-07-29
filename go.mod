@@ -1,3 +1,3 @@
-module github.com/AgoraIO-Community/go-tokenbuilder
+module go-tokenbuilder
 
 go 1.14

@@ -1,35 +1,25 @@
-package rtmtokenbuilder
+package rtmtokenbuilder2
 
 import (
-	"github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
+	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
 )
 
-// Role Type
-type Role uint16
-
-// Role consts
-const (
-	RoleRtmUser = 1
-)
-
-//RtmTokenBuilder class
-type RtmTokenBuilder struct {
-}
-
-//BuildToken method
-// appID: The App ID issued to you by Agora. Apply for a new App ID from
-//        Agora Dashboard if it is missing from your kit. See Get an App ID.
-// appCertificate:	Certificate of the application that you registered in
+// Build the RTM token.
+//
+// appId:           The App ID issued to you by Agora. Apply for a new App ID from
+//                  Agora Dashboard if it is missing from your kit. See Get an App ID.
+// appCertificate:  Certificate of the application that you registered in
 //                  the Agora Dashboard. See Get an App Certificate.
-// userAccount: The user account.
-// role: Role_Rtm_User = 1
-// privilegeExpireTs: represented by the number of seconds elapsed since
-//                    1/1/1970. If, for example, you want to access the
-//                    Agora Service within 10 minutes after the token is
-//                    generated, set expireTimestamp as the current
-//                    timestamp + 600 (seconds)./
-func BuildToken(appID string, appCertificate string, userAccount string, role Role, privilegeExpiredTs uint32) (string, error) {
-	token := accesstoken.CreateAccessToken2(appID, appCertificate, userAccount, "")
-	token.AddPrivilege(accesstoken.KLoginRtm, privilegeExpiredTs)
+// userId:          The user's account, max length is 64 Bytes.
+// expire:          represented by the number of seconds elapsed since now. If, for example, you want to access the
+//                  Agora Service within 10 minutes after the token is generated, set expireTimestamp as 600(seconds).
+// return The RTM token.
+func BuildToken(appId string, appCertificate string, userId string, expire uint32) (string, error) {
+	token := accesstoken.NewAccessToken(appId, appCertificate, expire)
+
+	serviceRtm := accesstoken.NewServiceRtm(userId)
+	serviceRtm.AddPrivilege(accesstoken.PrivilegeLogin, expire)
+	token.AddService(serviceRtm)
+
 	return token.Build()
 }

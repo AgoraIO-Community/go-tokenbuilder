@@ -1,4 +1,4 @@
 package tokenbuilder
 
 // Version is the current framework's version.
-const Version = "v0.1.3"
+const Version = "v2.0.0"

@@ -8,8 +8,8 @@ import (
 type Role uint16
 
 const (
-	RolePublisher  = 1 // for live broadcaster
-	RoleSubscriber = 2 // default, for live audience
+	RolePublisher  Role = 1 // for live broadcaster
+	RoleSubscriber Role = 2 // default, for live audience
 )
 
 // Build the RTC token with uid.

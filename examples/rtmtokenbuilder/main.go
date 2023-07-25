@@ -12,6 +12,6 @@ func main() {
 	userId := "test_user"
 	expire := uint32(600)
 
-	token, _ := rtmtokenbuilder.BuildToken(appID, appCertificate, userId, expire)
+	token, _ := rtmtokenbuilder.BuildToken(appID, appCertificate, userId, expire, "")
 	fmt.Println("BuildToken: " + token)
 }

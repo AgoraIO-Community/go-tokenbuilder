@@ -4,19 +4,31 @@ import (
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
 )
 
-// Build the RTM token.
+// BuildToken creates an access token with the specified parameters.
+// If streamName is provided, it adds the RTC service with the given streamName.
 //
-// appId:           The App ID issued to you by Agora. Apply for a new App ID from Agora Dashboard if it is missing from your kit. See Get an App ID.
-// appCertificate:  Certificate of the application that you registered in the Agora Dashboard. See Get an App Certificate.
-// userId:          The user's account, max length is 64 Bytes.
-// expire:          represented by the number of seconds elapsed since now. If, for example, you want to access the Agora Service within 10 minutes after the token is generated, set expireTimestamp as 600(seconds).
+// Parameters:
+//   - appId: The application ID for the access token.
+//   - appCertificate: The application certificate for the access token.
+//   - userId: The user ID for the access token.
+//   - expire: The expiration time in seconds for the access token.
+//   - streamName: The name of the stream (optional).
 //
-// return The RTM token.
-func BuildToken(appId string, appCertificate string, userId string, expire uint32) (string, error) {
+// Returns:
+//   - The generated access token as a string.
+//   - An error if there was an issue generating the token.
+func BuildToken(appId string, appCertificate string, userId string, expire uint32, streamName string) (string, error) {
 	token := accesstoken.NewAccessToken(appId, appCertificate, expire)
 
 	serviceRtm := accesstoken.NewServiceRtm(userId)
 	serviceRtm.AddPrivilege(accesstoken.PrivilegeLogin, expire)
+	if streamName != "" {
+		// Adds stream data priviliges if streamName != "". Can be "*" for all channels.
+		rtcStreamService := accesstoken.NewServiceRtc(streamName, userId)
+		rtcStreamService.AddPrivilege(accesstoken.PrivilegeJoinChannel, expire)
+		rtcStreamService.AddPrivilege(accesstoken.PrivilegePublishDataStream, expire)
+		token.AddService(rtcStreamService)
+	}
 	token.AddService(serviceRtm)
 
 	return token.Build()

@@ -42,14 +42,16 @@ jobs:
       - name: Build
         run: go build ./...
 
-      - name: Test
+      - name: Test production packages
         run: |
-          go test -race -coverprofile=coverage.out ./...
+          go list ./... \
+            | grep -Ev '/examples/|/internal/testutil$' \
+            | xargs go test -race -coverprofile=coverage.out
 
       - name: Enforce coverage floor
         if: matrix.go-version == 'stable'
         run: |
-          go tool cover -func=coverage.out | awk '/^total:/ { gsub(/%/, "", $3); if ($3 < 70) exit 1 }'
+          go tool cover -func=coverage.out | awk '/^total:/ { gsub(/%/, "", $3); if ($3 < 95) exit 1 }'
 
       - name: Check release tag
         if: startsWith(github.ref, 'refs/tags/v') && matrix.go-version == 'stable'

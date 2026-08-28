@@ -26,7 +26,7 @@ The project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Moved assertion helpers out of production packages and into an internal test-only package.
 - Changed AccessToken2 builds without any services to return a `no service added` error.
 - Corrected the exported library version to match the module release series.
-- Strengthened CI with Go 1.14 and current stable Go coverage, formatting, vet, build, race tests, a coverage floor, and release-tag checks.
+- Strengthened CI with Go 1.14 and current stable Go coverage, formatting, vet, build, race tests, a 95% production coverage floor, and release-tag checks.
 
 ### Fixed
 

@@ -134,6 +134,17 @@ go vet ./...
 go test ./...
 ```
 
+CI measures production-package coverage separately from runnable examples and the internal test assertion helper:
+
+```bash
+go list ./... \
+  | grep -Ev '/examples/|/internal/testutil$' \
+  | xargs go test -coverprofile=coverage.out
+go tool cover -func=coverage.out
+```
+
+The enforced production coverage floor is 95%.
+
 ## Releases
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes. Releases follow semantic versioning and are published as Git tags such as `v1.5.0`.

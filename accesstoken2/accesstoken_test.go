@@ -292,6 +292,32 @@ func Test_AccessToken_Parse_TokenChatApp(t *testing.T) {
 	AssertEqual(t, DataMockExpire, accessToken.Services[ServiceTypeChat].(*ServiceChat).Privileges[PrivilegeChatApp])
 }
 
+func Test_AccessToken_BuildAndParse_ConvoAIAndStt(t *testing.T) {
+	accessToken := NewAccessToken(DataMockAppId, DataMockAppCertificate, DataMockExpire)
+	accessToken.IssueTs = DataMockIssueTs
+	accessToken.Salt = DataMockSalt
+
+	accessToken.AddService(NewServiceStt())
+	accessToken.AddService(NewServiceConvoAI())
+
+	token, err := accessToken.Build()
+	AssertNil(t, err)
+
+	parsed := CreateAccessToken()
+	res, err := parsed.Parse(token)
+	AssertNil(t, err)
+	AssertEqual(t, true, res)
+	AssertEqual(t, 2, len(parsed.Services))
+
+	convoAI := parsed.Services[ServiceTypeConvoAI].(*ServiceConvoAI)
+	AssertEqual(t, uint16(ServiceTypeConvoAI), convoAI.Type)
+	AssertEqual(t, 0, len(convoAI.Privileges))
+
+	stt := parsed.Services[ServiceTypeStt].(*ServiceStt)
+	AssertEqual(t, uint16(ServiceTypeStt), stt.Type)
+	AssertEqual(t, 0, len(stt.Privileges))
+}
+
 func Test_GetUidStr(t *testing.T) {
 	AssertEqual(t, "", GetUidStr(0))
 	AssertEqual(t, DataMockUidStr, GetUidStr(DataMockUid))

@@ -16,11 +16,13 @@ const (
 	VersionLength = 3
 
 	// Service type
-	ServiceTypeRtc   = 1
-	ServiceTypeRtm   = 2
-	ServiceTypeFpa   = 4
-	ServiceTypeChat  = 5
-	ServiceTypeApaas = 7
+	ServiceTypeRtc     = 1
+	ServiceTypeRtm     = 2
+	ServiceTypeFpa     = 4
+	ServiceTypeChat    = 5
+	ServiceTypeApaas   = 7
+	ServiceTypeConvoAI = 9
+	ServiceTypeStt     = 10
 
 	// Rtc
 	PrivilegeJoinChannel        = 1
@@ -210,6 +212,60 @@ type ServiceApaas struct {
 	Role     int16
 }
 
+type ServiceConvoAI struct {
+	*Service
+}
+
+// NewServiceConvoAI creates a ConvoAI service.
+func NewServiceConvoAI() *ServiceConvoAI {
+	return &ServiceConvoAI{Service: NewService(ServiceTypeConvoAI)}
+}
+
+// Pack writes the ConvoAI service and privileges.
+func (serviceConvoAI *ServiceConvoAI) Pack(w io.Writer) (err error) {
+	err = serviceConvoAI.Service.Pack(w)
+	if err != nil {
+		return
+	}
+	return
+}
+
+// UnPack reads the ConvoAI privileges.
+func (serviceConvoAI *ServiceConvoAI) UnPack(r io.Reader) (err error) {
+	err = serviceConvoAI.Service.UnPack(r)
+	if err != nil {
+		return
+	}
+	return
+}
+
+type ServiceStt struct {
+	*Service
+}
+
+// NewServiceStt creates an STT service.
+func NewServiceStt() *ServiceStt {
+	return &ServiceStt{Service: NewService(ServiceTypeStt)}
+}
+
+// Pack writes the STT service and privileges.
+func (serviceStt *ServiceStt) Pack(w io.Writer) (err error) {
+	err = serviceStt.Service.Pack(w)
+	if err != nil {
+		return
+	}
+	return
+}
+
+// UnPack reads the STT privileges.
+func (serviceStt *ServiceStt) UnPack(r io.Reader) (err error) {
+	err = serviceStt.Service.UnPack(r)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func NewServiceApaas(roomUuid string, userUuid string, role int16) (serviceApaas *ServiceApaas) {
 	serviceApaas = &ServiceApaas{Service: NewService(ServiceTypeApaas), RoomUuid: roomUuid, UserUuid: userUuid, Role: role}
 	return
@@ -300,7 +356,7 @@ func (accessToken *AccessToken) Build() (res string, err error) {
 	}
 
 	// Pack services in definite order
-	serviceTypes := []uint16{ServiceTypeRtc, ServiceTypeRtm, ServiceTypeFpa, ServiceTypeChat, ServiceTypeApaas}
+	serviceTypes := []uint16{ServiceTypeRtc, ServiceTypeRtm, ServiceTypeFpa, ServiceTypeChat, ServiceTypeApaas, ServiceTypeConvoAI, ServiceTypeStt}
 	for _, serviceType := range serviceTypes {
 		if service, ok := accessToken.Services[serviceType]; ok {
 			err = service.Pack(buf)
@@ -406,6 +462,10 @@ func (accessToken *AccessToken) newService(serviceType uint16) (service IService
 		service = NewServiceChat("")
 	case ServiceTypeApaas:
 		service = NewServiceApaas("", "", -1)
+	case ServiceTypeConvoAI:
+		service = NewServiceConvoAI()
+	case ServiceTypeStt:
+		service = NewServiceStt()
 	default:
 		panic(fmt.Sprintf("new service failed: unknown service type `%v`", serviceType))
 	}

@@ -78,7 +78,7 @@ func TestBuildTokenInvalidCredentials(t *testing.T) {
 }
 
 func TestBuildTokenWithConfig(t *testing.T) {
-	token, err := BuildTokenWithConfig(Config{
+	config := Config{
 		AppID:                            dataMockAppID,
 		AppCertificate:                   dataMockAppCertificate,
 		ChannelName:                      dataMockChannelName,
@@ -91,7 +91,8 @@ func TestBuildTokenWithConfig(t *testing.T) {
 		PublishDataStreamPrivilegeExpire: dataMockExpire,
 		RTMUserID:                        dataMockRTMUserID,
 		RTMTokenExpire:                   dataMockExpire,
-	})
+	}
+	token, err := BuildTokenWithConfig(config)
 	testutil.Nil(t, err)
 
 	parsed := accesstoken.CreateAccessToken()
@@ -99,4 +100,11 @@ func TestBuildTokenWithConfig(t *testing.T) {
 	testutil.Nil(t, err)
 	testutil.Equal(t, true, ok)
 	testutil.Equal(t, 1, len(parsed.GetServices(accesstoken.ServiceTypeStt)))
+
+	config.ChannelName = ""
+	token, err = BuildTokenWithConfig(config)
+	testutil.Equal(t, "", token)
+	if err == nil {
+		t.Fatal("expected invalid config to fail")
+	}
 }

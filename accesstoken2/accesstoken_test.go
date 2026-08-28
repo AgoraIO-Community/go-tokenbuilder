@@ -474,6 +474,12 @@ func Test_AccessToken_VerifySignature(t *testing.T) {
 	testutil.Nil(t, err)
 	testutil.Equal(t, false, valid)
 
+	valid, err = parsed.VerifySignature("invalid")
+	testutil.Equal(t, false, valid)
+	if err == nil {
+		t.Fatal("expected malformed certificate to fail")
+	}
+
 	_, err = parsed.Parse("007not-base64")
 	if err == nil {
 		t.Fatal("expected malformed token to fail")

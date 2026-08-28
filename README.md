@@ -1,5 +1,7 @@
 # Agora Go Token Builder
 
+[![Production coverage: 95%+](https://img.shields.io/badge/production%20coverage-%E2%89%A595%25-brightgreen)](https://github.com/AgoraIO-Community/go-tokenbuilder/actions/workflows/go-test.yml)
+
 `go-tokenbuilder` generates server-side authentication tokens for Agora services. It supports the current AccessToken2 (`Token007`) format as well as the repository's legacy token packages.
 
 ## Installation

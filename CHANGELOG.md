@@ -12,14 +12,26 @@ The project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added AccessToken2 service type `9` and `convoaitokenbuilder.BuildToken` for generating combined RTC, RTM, and ConvoAI tokens.
 - Added AccessToken2 service type `10` and `stttokenbuilder.BuildToken` for generating combined RTC, RTM, and Speech-to-Text tokens.
-- Added parsing support and round-trip test coverage for ConvoAI and STT services.
+- Added AccessToken2 support for Streaming (`3`), FCDN (`6`), and resource-permission RTM (`8`) services, bringing the Go implementation in sync with the authoritative Tools implementation.
+- Added support for multiple services of the same type through `AccessToken.AddService` and `AccessToken.GetServices` while preserving the v1 `Services` map view.
+- Added `rtmtokenbuilder2.BuildTokenWithPermissions` for generating resource-permission RTM tokens.
+- Added validated, named `Config` APIs for ConvoAI and STT token generation while retaining the positional builders.
+- Added `VerifySignature` to both token implementations for authenticating parsed tokens.
+- Added parsing, round-trip, duplicate-service, malformed-input, combined-builder, and Python interoperability coverage.
 - Added runnable ConvoAI and STT examples using environment-provided Agora credentials.
 
 ### Changed
 
 - Expanded the README with installation, security, supported-service, and builder usage guidance.
+- Moved assertion helpers out of production packages and into an internal test-only package.
+- Changed AccessToken2 builds without any services to return a `no service added` error.
 - Corrected the exported library version to match the module release series.
-- Strengthened CI with formatting, vet, build, race-test, and release-tag checks.
+- Strengthened CI with Go 1.14 and current stable Go coverage, formatting, vet, build, race tests, a coverage floor, and release-tag checks.
+
+### Fixed
+
+- Changed malformed token parsing to return errors instead of panicking and to clear any previous parsed state before reuse.
+- Made AccessToken2 service packing deterministic for every supported service type.
 
 ## [1.4.0] - 2025-11-12
 

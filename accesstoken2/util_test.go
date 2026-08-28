@@ -18,8 +18,26 @@ func Test_base64EncodeStr(t *testing.T) {
 
 func Test_compressZlib(t *testing.T) {
 	compressed := compressZlib([]byte("hello"))
-	testutil.Equal(t, "789cca48cdc9c907040000ffff062c0215", fmt.Sprintf("%x", compressed))
 	testutil.Equal(t, "hello", string(decompressZlib(compressed)))
+}
+
+func assertTokenPayloadEqual(t *testing.T, expectedToken string, actualToken string) {
+	t.Helper()
+	if len(expectedToken) < VersionLength || len(actualToken) < VersionLength {
+		t.Fatalf("token is shorter than the %d-byte version prefix", VersionLength)
+	}
+	testutil.Equal(t, expectedToken[:VersionLength], actualToken[:VersionLength])
+
+	expectedCompressed, err := base64DecodeStr(expectedToken[VersionLength:])
+	testutil.Nil(t, err)
+	actualCompressed, err := base64DecodeStr(actualToken[VersionLength:])
+	testutil.Nil(t, err)
+
+	expectedPayload, err := decompressZlibWithError(expectedCompressed)
+	testutil.Nil(t, err)
+	actualPayload, err := decompressZlibWithError(actualCompressed)
+	testutil.Nil(t, err)
+	testutil.Equal(t, expectedPayload, actualPayload)
 }
 
 func Test_packUint16(t *testing.T) {

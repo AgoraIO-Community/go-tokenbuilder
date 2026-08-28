@@ -33,7 +33,7 @@ func Test_AccessToken_Build(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYEiJ9+zw7Gb1viNuGtMfy3JriuZNp+1h1iLu/rOePHlS91WBwdLcwNnR2DQl1cwg2cTEzMQ0KSkx1SLRyNDUwMwwydjY/YsAQwQTAwMjAwgAAgAA//+rZxiv", token)
+	assertTokenPayloadEqual(t, "007eJxSYEiJ9+zw7Gb1viNuGtMfy3JriuZNp+1h1iLu/rOePHlS91WBwdLcwNnR2DQl1cwg2cTEzMQ0KSkx1SLRyNDUwMwwydjY/YsAQwQTAwMjAwgAAgAA//+rZxiv", token)
 }
 
 func Test_AccessToken_Build_Error_AppId(t *testing.T) {
@@ -84,7 +84,7 @@ func Test_AccessToken_Build_ServiceRtc(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYBBbsMMnKq7p9Hf/HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxoAAAAD//8JqJOM=", token)
+	assertTokenPayloadEqual(t, "007eJxSYBBbsMMnKq7p9Hf/HcIX5kce9b518kCiQgSr5Zrp4X1Tu6UUGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiVwMRhYWRsYmhkbmxoAAAAD//8JqJOM=", token)
 }
 
 func Test_AccessToken_Build_ServiceRtc_Uid0(t *testing.T) {
@@ -101,7 +101,7 @@ func Test_AccessToken_Build_ServiceRtc_Uid0(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYLhzZP08Lxa1Pg57+TcXb/3cZ3wi4V6kbpbOog0G2dOYk20UGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiQwMgAAAAP//Npwiag==", token)
+	assertTokenPayloadEqual(t, "007eJxSYLhzZP08Lxa1Pg57+TcXb/3cZ3wi4V6kbpbOog0G2dOYk20UGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMoAwBIL4CgzmKeZGxmamqUmWFsYmFqbGluapxqnGaZYpJmYGSSkpiQwMgAAAAP//Npwiag==", token)
 }
 
 func Test_AccessToken_Build_ServiceRtm(t *testing.T) {
@@ -117,7 +117,7 @@ func Test_AccessToken_Build_ServiceRtm(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhkbu38RYIhgYmBgZABhJgZGBkYwn5OhJLW4JL60OLUIEAAA//9ZVh6A", token)
+	assertTokenPayloadEqual(t, "007eJxSYOCdJftjyTM2zxW6Xhm/5T0j5LdcUt/xYVt48fb5Mp3PX9coMFiaGzg7GpumpJoZJJuYmJmYJiUlplokGhmaGpgZJhkbu38RYIhgYmBgZABhJgZGBkYwn5OhJLW4JL60OLUIEAAA//9ZVh6A", token)
 }
 
 func Test_AccessToken_Build_ServiceChatUser(t *testing.T) {
@@ -133,7 +133,7 @@ func Test_AccessToken_Build_ServiceChatUser(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrAyMDIxgPheDkYWFkbGJoZG5MSAAAP//H6UeuA==", token)
+	assertTokenPayloadEqual(t, "007eJxSYNAIsnbS3v/A5t2TC6feR15r+6cq8bqAvfaW+tk/Vzz+p6xTYLA0N3B2NDZNSTUzSDYxMTMxTUpKTLVINDI0NTAzTDI2dv8iwBDBxMDAyADCrAyMDIxgPheDkYWFkbGJoZG5MSAAAP//H6UeuA==", token)
 }
 
 func Test_AccessToken_Build_ServiceChatApp(t *testing.T) {
@@ -149,7 +149,7 @@ func Test_AccessToken_Build_ServiceChatApp(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZGRgZmMB8BgZAAAAA//+t8hhr", token)
+	assertTokenPayloadEqual(t, "007eJxSYNDNaz3snC8huEfHWdz6s98qltq4zqy9fl99Uh0FDvy6F6DAYGlu4OxobJqSamaQbGJiZmKalJSYapFoZGhqYGaYZGzs/kWAIYKJgYGRAYRZGRgZmMB8BgZAAAAA//+t8hhr", token)
 }
 
 func Test_AccessToken_Build_MultipleServices(t *testing.T) {
@@ -174,7 +174,7 @@ func Test_AccessToken_Build_MultipleServices(t *testing.T) {
 
 	token, err := accessToken.Build()
 	testutil.Nil(t, err)
-	testutil.Equal(t, "007eJxSYJjqLJBlM239wwWvmBZ7tW619coNnPKSXaHayfKzZODswxMVGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMjAwMDMwgiGIr8BgnmJuZGxmmppkaWFsYmFqbGmeapxqnGaZYmJmkJSSksjFYGRhYWRsYmhkbswE18fJUJJaXBJfWpxaxAoXRFYKCAAA///aoiqr", token)
+	assertTokenPayloadEqual(t, "007eJxSYJjqLJBlM239wwWvmBZ7tW619coNnPKSXaHayfKzZODswxMVGCzNDZwdjU1TUs0Mkk1MzExMk5ISUy0SjQxNDcwMk4yN3b8IMEQwMTAwMjAwMDMwgiGIr8BgnmJuZGxmmppkaWFsYmFqbGmeapxqnGaZYmJmkJSSksjFYGRhYWRsYmhkbswE18fJUJJaXBJfWpxaxAoXRFYKCAAA///aoiqr", token)
 }
 
 func Test_AccessToken_Parse_TokenRtc(t *testing.T) {

@@ -4,24 +4,57 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*"
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
-    name: Run Tests
+    name: Go ${{ matrix.go-version }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - "1.14.x"
+          - stable
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '^1.20'
-      - name: Build and Test
+          go-version: ${{ matrix.go-version }}
+
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test production packages
         run: |
-          go get -v -t -d ./...
-          go build -v ./...
-          go test -cover $(go list ./... | grep -v examples)
+          go list ./... \
+            | grep -Ev '/examples/|/internal/testutil$' \
+            | xargs go test -race -coverprofile=coverage.out
+
+      - name: Enforce coverage floor
+        if: matrix.go-version == 'stable'
+        run: |
+          go tool cover -func=coverage.out | awk '/^total:/ { gsub(/%/, "", $3); if ($3 < 95) exit 1 }'
+
+      - name: Check release tag
+        if: startsWith(github.ref, 'refs/tags/v') && matrix.go-version == 'stable'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: go test -run TestVersionMatchesReleaseTag .

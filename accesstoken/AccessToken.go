@@ -254,12 +254,15 @@ func (serviceEducation *ServiceEducation) UnPack(r io.Reader) (err error) {
 }
 
 type AccessToken struct {
-	AppCert  string
-	AppId    string
-	Expire   uint32
-	IssueTs  uint32
-	Salt     uint32
-	Services map[uint16]IService
+	AppCert     string
+	AppId       string
+	Expire      uint32
+	IssueTs     uint32
+	Salt        uint32
+	Services    map[uint16]IService
+	signature   []byte
+	signingInfo []byte
+	parsed      bool
 }
 
 func NewAccessToken(appId string, appCert string, expire uint32) (accessToken *AccessToken) {
@@ -278,8 +281,6 @@ func (accessToken *AccessToken) AddService(service IService) {
 }
 
 func (accessToken *AccessToken) Build() (res string, err error) {
-	recoverException()
-
 	if !isUuid(accessToken.AppId) || !isUuid(accessToken.AppCert) {
 		return "", errors.New("check appId or appCertificate")
 	}
@@ -303,7 +304,7 @@ func (accessToken *AccessToken) Build() (res string, err error) {
 
 	// Sign
 	var sign []byte
-	sign, err = accessToken.getSign()
+	sign, err = accessToken.getSign(accessToken.AppCert)
 
 	if err != nil {
 		return
@@ -336,23 +337,40 @@ func (accessToken *AccessToken) Build() (res string, err error) {
 }
 
 func (accessToken *AccessToken) Parse(token string) (res bool, err error) {
-	recoverException()
+	accessToken.AppId = ""
+	accessToken.IssueTs = 0
+	accessToken.Expire = 0
+	accessToken.Salt = 0
+	accessToken.Services = make(map[uint16]IService)
+	accessToken.signature = nil
+	accessToken.signingInfo = nil
+	accessToken.parsed = false
+
+	if len(token) < VersionLength {
+		return false, errors.New("invalid token length")
+	}
 
 	version := token[:VersionLength]
 	if version != getVersion() {
-		return
+		return false, errors.New("invalid token version")
 	}
 
 	var decodeByte []byte
 	if decodeByte, err = base64DecodeStr(token[VersionLength:]); err != nil {
 		return
 	}
-	buffer := bytes.NewReader(decompressZlib(decodeByte))
-	// signature
-	_, err = unPackString(buffer)
-	if err != nil {
-		return
+	var rawTokenBuffer []byte
+	if rawTokenBuffer, err = decompressZlibWithError(decodeByte); err != nil {
+		return false, err
 	}
+	buffer := bytes.NewReader(rawTokenBuffer)
+	// signature
+	var signature string
+	if signature, err = unPackString(buffer); err != nil {
+		return false, err
+	}
+	accessToken.signature = []byte(signature)
+	accessToken.signingInfo = append(accessToken.signingInfo[:0], rawTokenBuffer[len(rawTokenBuffer)-buffer.Len():]...)
 	if accessToken.AppId, err = unPackString(buffer); err != nil {
 		return
 	}
@@ -376,16 +394,40 @@ func (accessToken *AccessToken) Parse(token string) (res bool, err error) {
 			return
 		}
 		service := accessToken.newService(serviceType)
+		if service == nil {
+			accessToken.parsed = true
+			return true, nil
+		}
 		if err = service.UnPack(buffer); err != nil {
 			return
 		}
 		accessToken.Services[serviceType] = service
 	}
 
+	accessToken.parsed = true
 	return true, nil
 }
 
-func (accessToken *AccessToken) getSign() (sign []byte, err error) {
+func (accessToken *AccessToken) VerifySignature(appCertificate string) (bool, error) {
+	if !accessToken.parsed || len(accessToken.signature) == 0 || len(accessToken.signingInfo) == 0 {
+		return false, errors.New("parse token before verifying signature")
+	}
+	if !isUuid(accessToken.AppId) || !isUuid(appCertificate) {
+		return false, errors.New("check appId or appCertificate")
+	}
+
+	sign, err := accessToken.getSign(appCertificate)
+	if err != nil {
+		return false, err
+	}
+	hSign := hmac.New(sha256.New, sign)
+	if _, err = hSign.Write(accessToken.signingInfo); err != nil {
+		return false, err
+	}
+	return hmac.Equal(accessToken.signature, hSign.Sum(nil)), nil
+}
+
+func (accessToken *AccessToken) getSign(appCertificate string) (sign []byte, err error) {
 	// IssueTs
 	bufIssueTs := new(bytes.Buffer)
 	err = packUint32(bufIssueTs, accessToken.IssueTs)
@@ -393,7 +435,7 @@ func (accessToken *AccessToken) getSign() (sign []byte, err error) {
 		return
 	}
 	hIssueTs := hmac.New(sha256.New, bufIssueTs.Bytes())
-	hIssueTs.Write([]byte(accessToken.AppCert))
+	hIssueTs.Write([]byte(appCertificate))
 
 	// Salt
 	bufSalt := new(bytes.Buffer)
@@ -420,7 +462,7 @@ func (accessToken *AccessToken) newService(serviceType uint16) (service IService
 	case ServiceTypeEducation:
 		service = NewServiceEducation("", "", -1)
 	default:
-		panic(fmt.Sprintf("new service failed: unknown service type `%v`", serviceType))
+		service = nil
 	}
 	return
 }

@@ -29,3 +29,15 @@ func BuildToken(appId string, appCertificate string, userId string, expire uint3
 
 	return token.Build()
 }
+
+// BuildTokenWithPermissions builds an RTM2 token with resource-level permissions.
+// This interface requires Agora assistance for proper usage.
+func BuildTokenWithPermissions(appId string, appCertificate string, userId string, permissions *accesstoken.Rtm2Permissions, expire uint32) (string, error) {
+	token := accesstoken.NewAccessToken(appId, appCertificate, expire)
+
+	serviceRtm2 := accesstoken.NewServiceRtm2(userId, permissions)
+	serviceRtm2.AddPrivilege(accesstoken.PrivilegeLogin, expire)
+	token.AddService(serviceRtm2)
+
+	return token.Build()
+}

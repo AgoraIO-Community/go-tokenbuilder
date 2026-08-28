@@ -1,0 +1,51 @@
+package main
+
+import (
+	"fmt"
+	"os"
+
+	convoaitokenbuilder "github.com/AgoraIO-Community/go-tokenbuilder/convoaitokenbuilder"
+	rtctokenbuilder "github.com/AgoraIO-Community/go-tokenbuilder/rtctokenbuilder2"
+)
+
+func main() {
+	appId := os.Getenv("AGORA_APP_ID")
+	appCertificate := os.Getenv("AGORA_APP_CERTIFICATE")
+
+	channelName := "7d72365eb983485397e3e3f9d460bdda"
+	rtcAccount := "2882341273"
+	rtcRole := rtctokenbuilder.Role(rtctokenbuilder.RolePublisher)
+	rtcTokenExpire := uint32(3600)
+	joinChannelPrivilegeExpire := uint32(3600)
+	pubAudioPrivilegeExpire := uint32(3600)
+	pubVideoPrivilegeExpire := uint32(3600)
+	pubDataStreamPrivilegeExpire := uint32(3600)
+	rtmUserId := "2882341273"
+	rtmTokenExpire := uint32(3600)
+
+	fmt.Println("App Id:", appId)
+	if appId == "" || appCertificate == "" {
+		fmt.Println("Need to set environment variable AGORA_APP_ID and AGORA_APP_CERTIFICATE")
+		return
+	}
+
+	result, err := convoaitokenbuilder.BuildTokenWithConfig(convoaitokenbuilder.Config{
+		AppID:                            appId,
+		AppCertificate:                   appCertificate,
+		ChannelName:                      channelName,
+		RTCAccount:                       rtcAccount,
+		RTCRole:                          rtcRole,
+		RTCTokenExpire:                   rtcTokenExpire,
+		JoinChannelPrivilegeExpire:       joinChannelPrivilegeExpire,
+		PublishAudioPrivilegeExpire:      pubAudioPrivilegeExpire,
+		PublishVideoPrivilegeExpire:      pubVideoPrivilegeExpire,
+		PublishDataStreamPrivilegeExpire: pubDataStreamPrivilegeExpire,
+		RTMUserID:                        rtmUserId,
+		RTMTokenExpire:                   rtmTokenExpire,
+	})
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("ConvoAI token: %s\n", result)
+	}
+}

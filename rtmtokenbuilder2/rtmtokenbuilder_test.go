@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken2"
+	"github.com/AgoraIO-Community/go-tokenbuilder/internal/testutil"
 )
 
 const (
@@ -15,15 +16,37 @@ const (
 
 func Test_BuildToken(t *testing.T) {
 	token, err := BuildToken(DataMockAppId, DataMockAppCertificate, DataMockUserId, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
-	accesstoken.AssertEqual(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
+	testutil.Equal(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
+}
+
+func TestBuildTokenWithPermissions(t *testing.T) {
+	permissions := accesstoken.NewRtm2Permissions()
+	permissions.Add(accesstoken.Rtm2ResourceMessageChannels, accesstoken.Rtm2PermissionRead, []string{"channel-a"})
+	permissions.Add(accesstoken.Rtm2ResourceUsers, accesstoken.Rtm2PermissionWrite, []string{"user-a", "user-b"})
+
+	token, err := BuildTokenWithPermissions(DataMockAppId, DataMockAppCertificate, DataMockUserId, permissions, DataMockExpire)
+	testutil.Nil(t, err)
+
+	parsed := accesstoken.CreateAccessToken()
+	ok, err := parsed.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, ok)
+
+	services := parsed.GetServices(accesstoken.ServiceTypeRtm2)
+	testutil.Equal(t, 1, len(services))
+	service := services[0].(*accesstoken.ServiceRtm2)
+	testutil.Equal(t, DataMockUserId, service.UserId)
+	testutil.Equal(t, permissions.Details, service.Permissions.Details)
 }

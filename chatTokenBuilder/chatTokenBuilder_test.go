@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
+	"github.com/AgoraIO-Community/go-tokenbuilder/internal/testutil"
 )
 
 const (
@@ -15,26 +16,30 @@ const (
 
 func Test_BuildChatUserToken(t *testing.T) {
 	token, err := BuildChatUserToken(DataMockAppId, DataMockAppCertificate, DataMockUserUuid, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, DataMockUserUuid, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).UserId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).Privileges[accesstoken.PrivilegeChatUser])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, DataMockUserUuid, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).UserId)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).Privileges[accesstoken.PrivilegeChatUser])
 }
 
 func Test_BuildChatAppToken(t *testing.T) {
 	token, err := BuildChatAppToken(DataMockAppId, DataMockAppCertificate, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).Privileges[accesstoken.PrivilegeChatApp])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeChat].(*accesstoken.ServiceChat).Privileges[accesstoken.PrivilegeChatApp])
 
 }

@@ -10,39 +10,9 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
-	"path"
-	"runtime"
-	"runtime/debug"
 	"sort"
-	"testing"
 	"time"
 )
-
-func AssertNil(t *testing.T, err error) {
-	if err != nil && err != io.EOF {
-		t.Error("Error, Not nil")
-		_, shortFile, _, line, _ := getCallerInfo(2)
-		t.Errorf("%s:%d", shortFile, line)
-		t.Errorf("err:%+v", err)
-	}
-}
-
-func AssertEqual(t *testing.T, expected, actual interface{}) {
-	if expected != actual {
-		t.Error("Error, Not equal")
-		_, shortFile, _, line, _ := getCallerInfo(2)
-		t.Errorf("%s:%d", shortFile, line)
-		t.Errorf("Expected:%+v", expected)
-		t.Errorf("  Actual:%+v", actual)
-	}
-}
-
-func getCallerInfo(skip int) (funcName string, shortFile string, longFile string, line int, pc uintptr) {
-	pc, longFile, line, _ = runtime.Caller(skip)
-	funcName = path.Base(runtime.FuncForPC(pc).Name())
-	shortFile = path.Base(longFile)
-	return
-}
 
 func base64EncodeStr(src []byte) string {
 	return base64.StdEncoding.EncodeToString(src)
@@ -61,26 +31,27 @@ func compressZlib(src []byte) []byte {
 }
 
 func decompressZlib(compressSrc []byte) []byte {
+	out, _ := decompressZlibWithError(compressSrc)
+	return out
+}
+
+func decompressZlibWithError(compressSrc []byte) ([]byte, error) {
 	b := bytes.NewReader(compressSrc)
 	var out bytes.Buffer
-	r, _ := zlib.NewReader(b)
-	io.Copy(&out, r)
-	return out.Bytes()
+	r, err := zlib.NewReader(b)
+	if err != nil {
+		return nil, fmt.Errorf("decompress token: %w", err)
+	}
+	defer r.Close()
+	if _, err = io.Copy(&out, r); err != nil {
+		return nil, fmt.Errorf("decompress token: %w", err)
+	}
+	return out.Bytes(), nil
 }
 
 func getRand(min, max int) int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(max-min) + min
-}
-
-func p(format string, data ...interface{}) {
-	fmt.Println(fmt.Sprintf(format, data...))
-}
-
-func recoverException() {
-	if err := recover(); err != nil {
-		p("err:%s, stack:%s", err, debug.Stack())
-	}
 }
 
 func packUint16(w io.Writer, n uint16) error {
@@ -127,7 +98,9 @@ func unPackString(r io.Reader) (s string, err error) {
 	}
 
 	buf := make([]byte, n)
-	r.Read(buf)
+	if _, err = io.ReadFull(r, buf); err != nil {
+		return
+	}
 	s = string(buf)
 	return
 }

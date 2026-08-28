@@ -29,10 +29,20 @@ func main() {
 		return
 	}
 
-	result, err := convoaitokenbuilder.BuildToken(
-		appId, appCertificate, channelName, rtcAccount, rtcRole, rtcTokenExpire,
-		joinChannelPrivilegeExpire, pubAudioPrivilegeExpire, pubVideoPrivilegeExpire,
-		pubDataStreamPrivilegeExpire, rtmUserId, rtmTokenExpire)
+	result, err := convoaitokenbuilder.BuildTokenWithConfig(convoaitokenbuilder.Config{
+		AppID:                            appId,
+		AppCertificate:                   appCertificate,
+		ChannelName:                      channelName,
+		RTCAccount:                       rtcAccount,
+		RTCRole:                          rtcRole,
+		RTCTokenExpire:                   rtcTokenExpire,
+		JoinChannelPrivilegeExpire:       joinChannelPrivilegeExpire,
+		PublishAudioPrivilegeExpire:      pubAudioPrivilegeExpire,
+		PublishVideoPrivilegeExpire:      pubVideoPrivilegeExpire,
+		PublishDataStreamPrivilegeExpire: pubDataStreamPrivilegeExpire,
+		RTMUserID:                        rtmUserId,
+		RTMTokenExpire:                   rtmTokenExpire,
+	})
 	if err != nil {
 		fmt.Println(err)
 	} else {

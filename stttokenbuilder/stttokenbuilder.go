@@ -1,9 +1,34 @@
 package stttokenbuilder
 
 import (
+	tokenbuilder "github.com/AgoraIO-Community/go-tokenbuilder"
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken2"
 	rtctokenbuilder "github.com/AgoraIO-Community/go-tokenbuilder/rtctokenbuilder2"
 )
+
+// Config contains named inputs for an STT token.
+type Config = tokenbuilder.ProductTokenConfig
+
+// BuildTokenWithConfig validates and builds an STT token from named inputs.
+func BuildTokenWithConfig(config Config) (string, error) {
+	if err := config.Validate(); err != nil {
+		return "", err
+	}
+	return BuildToken(
+		config.AppID,
+		config.AppCertificate,
+		config.ChannelName,
+		config.RTCAccount,
+		config.RTCRole,
+		config.RTCTokenExpire,
+		config.JoinChannelPrivilegeExpire,
+		config.PublishAudioPrivilegeExpire,
+		config.PublishVideoPrivilegeExpire,
+		config.PublishDataStreamPrivilegeExpire,
+		config.RTMUserID,
+		config.RTMTokenExpire,
+	)
+}
 
 // BuildToken builds a Token007 that carries RTC, RTM, and STT services.
 //

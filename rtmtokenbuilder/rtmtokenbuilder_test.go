@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
+	"github.com/AgoraIO-Community/go-tokenbuilder/internal/testutil"
 )
 
 const (
@@ -15,32 +16,36 @@ const (
 
 func Test_BuildToken(t *testing.T) {
 	token, err := BuildToken(DataMockAppId, DataMockAppCertificate, DataMockUserId, DataMockExpire, "")
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
-	accesstoken.AssertEqual(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
+	testutil.Equal(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
 }
 
 func Test_BuildTokenWithStream(t *testing.T) {
 	token, err := BuildToken(DataMockAppId, DataMockAppCertificate, DataMockUserId, DataMockExpire, "*")
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
-	accesstoken.AssertEqual(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtm] != nil)
+	testutil.Equal(t, DataMockUserId, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).UserId)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtm), accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtm].(*accesstoken.ServiceRtm).Privileges[accesstoken.PrivilegeLogin])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
 }

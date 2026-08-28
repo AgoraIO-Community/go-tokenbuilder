@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	accesstoken "github.com/AgoraIO-Community/go-tokenbuilder/accesstoken"
+	"github.com/AgoraIO-Community/go-tokenbuilder/internal/testutil"
 )
 
 const (
@@ -18,76 +19,84 @@ const (
 
 func Test_BuildTokenWithUid_RolePublisher(t *testing.T) {
 	token, err := BuildTokenWithUid(DataMockAppId, DataMockAppCertificate, DataMockChannelName, DataMockUid, RolePublisher, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
-	accesstoken.AssertEqual(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
-	accesstoken.AssertEqual(t, DataMockUidStr, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
+	testutil.Equal(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
+	testutil.Equal(t, DataMockUidStr, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
 }
 
 func Test_BuildTokenWithUid_RoleSubscriber(t *testing.T) {
 	token, err := BuildTokenWithUid(DataMockAppId, DataMockAppCertificate, DataMockChannelName, DataMockUid, RoleSubscriber, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
-	accesstoken.AssertEqual(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
-	accesstoken.AssertEqual(t, DataMockUidStr, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
+	testutil.Equal(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
+	testutil.Equal(t, DataMockUidStr, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
 }
 
 func Test_BuildTokenWithAccount_RolePublisher(t *testing.T) {
 	token, err := BuildTokenWithAccount(DataMockAppId, DataMockAppCertificate, DataMockChannelName, DataMockAccount, RolePublisher, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
-	accesstoken.AssertEqual(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
-	accesstoken.AssertEqual(t, DataMockAccount, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
+	testutil.Equal(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
+	testutil.Equal(t, DataMockAccount, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
 }
 
 func Test_BuildTokenWithAccount_RoleSubscriber(t *testing.T) {
 	token, err := BuildTokenWithAccount(DataMockAppId, DataMockAppCertificate, DataMockChannelName, DataMockAccount, RoleSubscriber, DataMockExpire)
-	accesstoken.AssertNil(t, err)
+	testutil.Nil(t, err)
 
 	accessToken := accesstoken.CreateAccessToken()
-	accessToken.Parse(token)
+	parsed, err := accessToken.Parse(token)
+	testutil.Nil(t, err)
+	testutil.Equal(t, true, parsed)
 
-	accesstoken.AssertEqual(t, DataMockAppId, accessToken.AppId)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Expire)
-	accesstoken.AssertEqual(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
-	accesstoken.AssertEqual(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
-	accesstoken.AssertEqual(t, DataMockAccount, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
-	accesstoken.AssertEqual(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
-	accesstoken.AssertEqual(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
-	accesstoken.AssertEqual(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
+	testutil.Equal(t, DataMockAppId, accessToken.AppId)
+	testutil.Equal(t, DataMockExpire, accessToken.Expire)
+	testutil.Equal(t, true, accessToken.Services[accesstoken.ServiceTypeRtc] != nil)
+	testutil.Equal(t, DataMockChannelName, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).ChannelName)
+	testutil.Equal(t, DataMockAccount, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Uid)
+	testutil.Equal(t, uint16(accesstoken.ServiceTypeRtc), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Type)
+	testutil.Equal(t, DataMockExpire, accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegeJoinChannel])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishAudioStream])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishVideoStream])
+	testutil.Equal(t, uint32(0), accessToken.Services[accesstoken.ServiceTypeRtc].(*accesstoken.ServiceRtc).Privileges[accesstoken.PrivilegePublishDataStream])
 }
